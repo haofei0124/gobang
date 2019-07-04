@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>gobang</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #ccc;
+    }
+    #canvas {
+      display: block;
+      margin: 20px auto;
+      /* width: 450px;
+      height: 450px; */
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="450px" height="450px"></canvas>
+</body>
+<script>
+  var canvas = document.querySelector('#canvas');
+  var ctx = canvas.getContext('2d');
+  var chesscolor=['black', 'white'];
+  var step = 0;
+  var maparr = [];
+  var mode =[
+    [1, 0],
+    [0, 1],
+    [1, 1],
+    [1, -1]
+  ]
+  for (var i=0; i<14; i++) {
+    maparr[i]=[];
+    for (var j=0; j<15; j++) {
+      maparr[i][j]=0
+    }
+  }
+  for (var i=0; i< 14; i++) {
+
+    ctx.moveTo(30*(i+1), 30);
+    ctx.lineTo(30*(i+1), 420);
+    ctx.moveTo(30, 30*(i+1));
+    ctx.lineTo(420, 30*(i+1));
+  }
+  ctx.stroke();
+  function drawchess (x, y, color) {
+    // console.log(color)
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(x,y,15,0,Math.PI*2,false);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // 开始绘制
+  canvas.addEventListener('click', function(e) {   
+    var px = Math.floor((e.offsetX+15)/30)-1;
+    var py = Math.floor((e.offsetY+15)/30)-1;
+    if ((px+1)*30 == 0 || (py+1)*30 == 0 | (px+1)*30 == 450 || (py+1)*30 == 450) {
+      return;
+    }
+    if (maparr[px][py]==0) {
+      drawchess((px+1)*30, (py+1)*30, chesscolor[step%2]);
+      maparr[px][py] = chesscolor[step%2];
+      checkwin(px, py, chesscolor[step%2],mode[0]);
+      checkwin(px, py, chesscolor[step%2],mode[1]);
+      checkwin(px, py, chesscolor[step%2],mode[2]);
+      checkwin(px, py, chesscolor[step%2],mode[3]);
+      // checkwinY(px, py, chesscolor[step%2]);
+      step++;
+
+    }
+  })
+  
+
+  function checkwin(x, y, color, mode) {
+    // console.log(x, y, color)
+  var count = 0;
+  for(var i =1; i<5;i++) {
+    if(maparr[x+i*mode[0]]) {
+      if(maparr[x+i*mode[0]][y+i*mode[1]]==color) {
+        count++;
+      }else{
+        break;
+      }
+    }
+  }
+  for(var i =1; i<5;i++) {
+    if(maparr[x-i*mode[0]]) {
+      if(maparr[x-i*mode[0]][y-i*mode[1]]==color) {
+        count++;
+      }else{
+        break;
+      }
+    }
+  }
+  if(count>=4) {
+    alert(color+'win')
+  }
+  }
+
+  // function checkwinY(x, y, color) {
+  //   // console.log(x, y, color)
+  //   var count = 0;
+  //   for(var i =1; i<5;i++) {
+  //     if(maparr[x]) {
+  //       if(maparr[x][y+i]==color) {
+  //         count++;
+  //       }else{
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   for(var i =1; i<5;i++) {
+  //     if(maparr[x]) {
+  //       if(maparr[x][y-i]==color) {
+  //         count++;
+  //       }else{
+  //         break;
+  //       }
+  //     }
+  //   }
+  // console.log('竖直方向有'+ (count+1) +'个' + color)
+  // }
+</script>
+</html>
